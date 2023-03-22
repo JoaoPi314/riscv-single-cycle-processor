@@ -6,8 +6,11 @@ module top;
     logic a_rstn;
     int seed = 1;
     logic [31:0] next_pc, pc;
+    logic [31:0] output_instr;
+    logic [31:0] aux;
 
     incr_pc pc_incr(.clk(clk), .a_rstn(a_rstn), .next_pc(next_pc), .pc(pc));
+    instr_mem mem_instr(.i_addr(pc), .o_instr(output_instr));
 
     initial begin
         clk = 1'b0;
@@ -19,13 +22,16 @@ module top;
     end
 
     always@(posedge clk) begin 
-        next_pc <= $random(seed);
+        aux = $random(seed);
+        next_pc <= (aux % 4092) + (4 - (aux%4));
     end
 
 
     initial begin
         $dumpfile("waves.vcd");
         $dumpvars(0, pc_incr);
+        $dumpvars(0, mem_instr);
+
     end
 
     always begin
