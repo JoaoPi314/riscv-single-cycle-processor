@@ -1,5 +1,3 @@
-tyepedef enum bit[4:0] { ZERO, RA, SP, GP, TP, T0, T1, T2, S0, S1, A0, A1, A2, A3, A4, A5, A6, A7, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, T3, T4, T5, T6} register_labels;
-
 module register_bank(
     input logic         clk,
     input logic [4:0]   r_op_a,
@@ -13,11 +11,47 @@ module register_bank(
 
     logic [31:0] registers [0:31];
 
+    initial begin
+        registers[0] = 32'h0000_0000;
+        registers[1] = 32'hCAFE_F0DA;
+        registers[2] = 32'hCAFE_F0DA;
+        registers[3] = 32'hCAFE_F0DA;
+        registers[4] = 32'hCAFE_F0DA;
+        registers[5] = 32'hCAFE_F0DA;
+        registers[6] = 32'hCAFE_F0DA;
+        registers[7] = 32'hDEAD_B0DE;
+        registers[8] = 32'hDEAD_B0DE;
+        registers[9] = 32'hDEAD_B0DE;
+        registers[10] = 32'hDEAD_B0DE;
+        registers[11] = 32'hDEAD_B0DE;
+        registers[12] = 32'hDEAD_B0DE;
+        registers[13] = 32'hF0DA_DEAD;
+        registers[14] = 32'hF0DA_DEAD;
+        registers[15] = 32'hF0DA_DEAD;
+        registers[16] = 32'hF0DA_DEAD;
+        registers[17] = 32'hF0DA_DEAD;
+        registers[18] = 32'hF0DA_DEAD;
+        registers[19] = 32'hF0DA_F0DA;
+        registers[20] = 32'hF0DA_F0DA;
+        registers[21] = 32'hF0DA_F0DA;
+        registers[22] = 32'hF0DA_F0DA;
+        registers[23] = 32'hF0DA_F0DA;
+        registers[24] = 32'hF0DA_F0DA;
+        registers[25] = 32'hDEAD_DEAD;
+        registers[26] = 32'hDEAD_DEAD;
+        registers[27] = 32'hDEAD_DEAD;
+        registers[28] = 32'hDEAD_DEAD;
+        registers[29] = 32'hDEAD_DEAD;
+        registers[30] = 32'hDEAD_DEAD;
+        registers[31] = 32'hFFFF_FFFF;
+    end
+
+
     assign rd_a = registers[r_op_a];
     assign rd_b = registers[r_op_b];
 
     always@(posedge clk) begin
-        if(w_en)
+        if(w_en && r_write)
             registers[r_write] <= w_data;
     end
 
