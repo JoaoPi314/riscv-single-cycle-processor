@@ -53,6 +53,8 @@ module register_bank(
     always@(posedge clk) begin
         if(w_en && r_write)
             registers[r_write] <= w_data;
+        else
+            registers[r_write] <= registers[r_write];
     end
 
 endmodule : register_bank
