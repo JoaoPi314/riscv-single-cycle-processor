@@ -1,4 +1,4 @@
-module data_mem(
+module riscv_data_mem(
     input logic clk,
     input logic [31:0] i_addr,
     input logic [31:0] w_data,
@@ -6,25 +6,24 @@ module data_mem(
     output logic [31:0] r_data
 );
 
-    logic [31:0] data_memory [0:8191];
+    logic [7:0] data_memory [0:8191];
 
     initial begin
-        $readmemh("data_mem.mem", memory);
+        $readmemh("data_mem.mem", data_memory);
     end
-
 
     always_comb begin
         if(~w_en)
-            r_data = data_memory[i_addr];
+            r_data = {data_memory[i_addr], data_memory[i_addr+1], data_memory[i_addr+2], data_memory[i_addr+3]};
         else
             r_data = r_data;
     end
 
     always @(posedge clk) begin
         if(w_en)
-            memory[i_addr] <= w_data;
+            data_memory[i_addr] <= w_data;
         else
-            memory[i_addr] <= memory[i_addr];
+            data_memory[i_addr] <= data_memory[i_addr];
     end
 
-endmodule : data_mem
+endmodule : riscv_data_mem
