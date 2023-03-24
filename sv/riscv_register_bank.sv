@@ -1,4 +1,4 @@
-module register_bank(
+module riscv_register_bank(
     input logic         clk,
     input logic [4:0]   r_op_a,
     input logic [4:0]   r_op_b,
@@ -21,7 +21,7 @@ module register_bank(
         registers[6] = 32'hCAFE_F0DA;
         registers[7] = 32'hDEAD_B0DE;
         registers[8] = 32'hDEAD_B0DE;
-        registers[9] = 32'hDEAD_B0DE;
+        registers[9] = 32'h0000_1004;
         registers[10] = 32'hDEAD_B0DE;
         registers[11] = 32'hDEAD_B0DE;
         registers[12] = 32'hDEAD_B0DE;
@@ -57,4 +57,4 @@ module register_bank(
             registers[r_write] <= registers[r_write];
     end
 
-endmodule : register_bank
+endmodule : riscv_register_bank

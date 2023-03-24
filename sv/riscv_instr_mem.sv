@@ -1,4 +1,4 @@
-module instr_mem(
+module riscv_instr_mem(
     input logic [31:0] i_addr,
     output logic [31:0] o_instr);
 
@@ -10,4 +10,4 @@ module instr_mem(
 
     assign o_instr = {memory[i_addr], memory[i_addr+1], memory[i_addr+2], memory[i_addr+3]};
 
-endmodule : instr_mem
+endmodule : riscv_instr_mem
