@@ -11,10 +11,23 @@ module riscv_datapath(input logic clk, input logic a_rstn);
     logic [31:0] alu_output;
     logic [31:0] data_mem_output;
 
+    // Controls
+    logic [2:0] alu_control;
+    logic       reg_write;
+    logic       imm_src;
+    logic       mem_write;
+
+
+    initial begin
+        alu_control = 3'b000;
+        reg_write = 1'b1;
+        mem_write = 1'b0;
+        @(posedge clk);
+    end
+
     // Update PC register
     riscv_update_pc update_pc(
         .clk(clk),
-        .a_rstn(a_rstn),
         .next_pc(next_pc),
         .pc(pc)
     );
@@ -23,7 +36,6 @@ module riscv_datapath(input logic clk, input logic a_rstn);
     always_comb begin
         next_pc = pc + 4;
     end
-
 
     // Instruction memory
     riscv_instr_mem instr_mem(
@@ -37,7 +49,7 @@ module riscv_datapath(input logic clk, input logic a_rstn);
         .r_op_a(instr[19:15]),
         .r_write(instr[11:7]),
         .w_data(data_mem_output),
-        .w_en(1'b1),
+        .w_en(reg_write),
         .rd_a(r_output_a)
     );
 
@@ -48,7 +60,7 @@ module riscv_datapath(input logic clk, input logic a_rstn);
     riscv_alu alu(
         .op_a(r_output_a),
         .op_b(imm_extend),
-        .alu_control(3'b000),
+        .alu_control(alu_control),
         .o_data(alu_output)
     );
 
@@ -56,7 +68,7 @@ module riscv_datapath(input logic clk, input logic a_rstn);
     riscv_data_mem data_mem(
         .clk(clk),
         .i_addr(alu_output),
-        .w_en(1'b0),
+        .w_en(mem_write),
         .r_data(data_mem_output)
     );
     
