@@ -22,10 +22,12 @@ module top;
     initial begin
         $dumpfile("waves.vcd");
         $dumpvars;
-        // for(int i = 0; i < 32; i++) begin
-        //     $dumpvars(1, datapath.register_bank.registers[i]);
-        // end
-
+        for(int i = 0; i < 32; i++) begin
+            $dumpvars(1, datapath.register_bank.registers[i]);
+        end
+        for(int i = 0; i < 8192; i++) begin
+            $dumpvars(1, datapath.data_mem.data_memory[i]);
+        end
     end
 
     always begin
