@@ -16,8 +16,8 @@ module riscv_register_bank(
         registers[1] = 32'hCAFE_F0DA;
         registers[2] = 32'hCAFE_F0DA;
         registers[3] = 32'hCAFE_F0DA;
-        registers[4] = 32'hCAFE_F0DA;
-        registers[5] = 32'hCAFE_F0DA;
+        registers[4] = 32'hFFFF_0000;
+        registers[5] = 32'h0000_FFFF;
         registers[6] = 32'hCAFE_F0DA;
         registers[7] = 32'hDEAD_B0DE;
         registers[8] = 32'hDEAD_B0DE;

@@ -8,6 +8,10 @@ module riscv_alu(
     always_comb begin
         case(alu_control)
             3'b000: o_data = op_a + op_b;
+            3'b001: o_data = op_a - op_b;
+            3'b010: o_data = op_a & op_b;
+            3'b011: o_data = op_a | op_b;
+            3'b101: o_data = (op_a < op_b);
         endcase
     end
 
