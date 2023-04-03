@@ -2,7 +2,8 @@ module riscv_alu(
     input logic [31:0] op_a,
     input logic [31:0] op_b,
     input logic [2:0] alu_control,
-    output logic [31:0] o_data
+    output logic [31:0] o_data,
+    output logic zero
 );
 
     always_comb begin
@@ -15,7 +16,7 @@ module riscv_alu(
         endcase
     end
 
-
+    assign zero = (~(|o_data)) ? 1'b1 : 1'b0;
 
 
 endmodule : riscv_alu

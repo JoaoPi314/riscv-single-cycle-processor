@@ -13,32 +13,44 @@ module riscv_datapath(input logic clk, input logic a_rstn);
     logic [31:0] alu_output;
     logic [31:0] r_input_write;
     logic [31:0] data_mem_output;
-
+    logic [31:0] pc_target;
+    logic [31:0] pc_plus_4;
 
     // Controls
     logic [2:0] alu_control;
     logic       alu_src;
     logic       reg_write;
-    logic       imm_src;
+    logic [1:0] imm_src;
     logic       mem_write;
     logic       result_src;
+    logic       pc_src;
+    logic       zero;
+
+
 
 
     initial begin
+        pc_src = 1'b0;
         alu_control = 3'b000;
         reg_write = 1'b1;
         mem_write = 1'b0;
-        imm_src = 1'b0;
+        imm_src = 2'b00;
         alu_src = 1'b1;
         result_src = 1'b1;
         @(posedge clk);
-        imm_src = 1'b1;
+        imm_src = 2'b01;
         mem_write = 1'b1;
         @(posedge clk);
         alu_control = 3'b011;
         alu_src = 0;
         mem_write = 1'b0;
         result_src = 1'b0;
+        @(posedge clk);
+        pc_src = 1'b1;
+        imm_src = 2'b10;
+        alu_src = 1'b0;
+        alu_control = 3'b001;
+
     end
 
     // Update PC register
@@ -50,7 +62,7 @@ module riscv_datapath(input logic clk, input logic a_rstn);
 
     // Increment PC register
     always_comb begin
-        next_pc = pc + 4;
+        pc_plus_4 = pc + 4;
     end
 
     // Instruction memory
@@ -73,10 +85,13 @@ module riscv_datapath(input logic clk, input logic a_rstn);
 
     // Extend immediate
     always_comb begin
-        if(imm_src)
-            imm_extend = {{24{instr[31]}}, instr[31:25], instr[11:7]};
-        else
-            imm_extend = {{24{instr[31]}}, instr[31:20]};
+        case(imm_src)
+            2'b00: imm_extend = {{20{instr[31]}}, instr[31:20]};
+            2'b01: imm_extend = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+            2'b10: imm_extend = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0};
+            2'b11: imm_extend = 0;
+        endcase
+            
     end
 
     // Mux to select register o immediate to ALU
@@ -92,7 +107,8 @@ module riscv_datapath(input logic clk, input logic a_rstn);
         .op_a(r_output_a),
         .op_b(alu_input_b),
         .alu_control(alu_control),
-        .o_data(alu_output)
+        .o_data(alu_output),
+        .zero(zero)
     );
 
     // Mux to select register output from alu or memory
@@ -111,6 +127,19 @@ module riscv_datapath(input logic clk, input logic a_rstn);
         .w_en(mem_write),
         .r_data(data_mem_output)
     );
+
+
+    // Branch adder
+    always_comb begin
+        pc_target = pc + imm_extend;
+    end
     
+    // Mux to select PC from branch or normal increment
+    always_comb begin
+        case(pc_src)
+            1'b0: next_pc = pc_plus_4;
+            1'b1: next_pc = pc_target;
+        endcase
+    end
 
 endmodule : riscv_datapath
