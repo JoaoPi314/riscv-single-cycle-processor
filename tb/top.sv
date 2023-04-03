@@ -16,18 +16,18 @@ module top;
         #10 a_rstn = 1'b0;
         #10 a_rstn = 1'b1;
 
-        #1000 $finish();
+        #100 $finish();
     end
 
     initial begin
         $dumpfile("waves.vcd");
         $dumpvars;
-        for(int i = 0; i < 32; i++) begin
-            $dumpvars(1, datapath.register_bank.registers[i]);
-        end
-        for(int i = 0; i < 8192; i++) begin
-            $dumpvars(1, datapath.data_mem.data_memory[i]);
-        end
+        // for(int i = 0; i < 32; i++) begin
+        //     $dumpvars(1, datapath.register_bank.registers[i]);
+        // end
+        // for(int i = 0; i < 8192; i++) begin
+        //     $dumpvars(1, datapath.data_mem.data_memory[i]);
+        // end
     end
 
     always begin
