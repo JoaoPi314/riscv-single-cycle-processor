@@ -19,31 +19,41 @@ module riscv_control(
 
     // Main decoder
     always_comb begin
-        result_src = 1'b0;
-        mem_write = 1'b0;
-        alu_src = 1'b0;
-        imm_src = 2'b00;
-        reg_write = 1'b0;
-        alu_op = 2'b00;
-        branch = 1'b0;
-
         case(op)
             7'b0000_011: begin
-                reg_write = 1'b1;
-                alu_src = 1'b1;
                 result_src = 1'b1;
+                mem_write = 1'b0;
+                alu_src = 1'b1;
+                imm_src = 2'b00;
+                reg_write = 1'b1;
+                alu_op = 2'b00;
+                branch = 1'b0;
             end
             7'b0100_011: begin
-                imm_src = 2'b01;
-                alu_src = 1'b1;
+                result_src = 1'b0;
                 mem_write = 1'b1;
+                alu_src = 1'b1;
+                imm_src = 2'b01;
+                reg_write = 1'b0;
+                alu_op = 2'b00;
+                branch = 1'b0;
             end
             7'b0110_011: begin
+                result_src = 1'b0;
+                mem_write = 1'b0;
+                alu_src = 1'b0;
+                imm_src = 2'b01;
                 reg_write = 1'b1;
                 alu_op = 2'b10;
+                branch = 1'b0;
             end
             7'b1100_011: begin
+                result_src = 1'b0;
+                mem_write = 1'b0;
+                alu_src = 1'b0;
                 imm_src = 2'b10;
+                reg_write = 1'b0;
+                alu_op = 2'b01;
                 branch = 1'b1;
             end
         endcase
@@ -54,7 +64,6 @@ module riscv_control(
     always_comb begin
         alu_control = 3'b000;
         case(alu_op)
-            2'b00: alu_control = 3'b000;
             2'b01: alu_control = 3'b001;
             2'b10: begin
                 case(funct3)
