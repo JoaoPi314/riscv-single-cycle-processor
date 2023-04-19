@@ -42,30 +42,6 @@ module riscv_datapath(input logic clk, input logic a_rstn);
         .alu_control(alu_control)
     );
 
-    // initial begin
-    //     pc_src = 1'b0;
-    //     alu_control = 3'b000;
-    //     reg_write = 1'b1;
-    //     mem_write = 1'b0;
-    //     imm_src = 2'b00;
-    //     alu_src = 1'b1;
-    //     result_src = 1'b1;
-    //     @(posedge clk);
-    //     imm_src = 2'b01;
-    //     mem_write = 1'b1;
-    //     @(posedge clk);
-    //     alu_control = 3'b011;
-    //     alu_src = 0;
-    //     mem_write = 1'b0;
-    //     result_src = 1'b0;
-    //     @(posedge clk);
-    //     pc_src = 1'b1;
-    //     imm_src = 2'b10;
-    //     alu_src = 1'b0;
-    //     alu_control = 3'b001;
-
-    // end
-
     // Update PC register
     riscv_update_pc update_pc(
         .clk(clk),
@@ -103,6 +79,7 @@ module riscv_datapath(input logic clk, input logic a_rstn);
             2'b00: imm_extend = {{20{instr[31]}}, instr[31:20]};
             2'b01: imm_extend = {{20{instr[31]}}, instr[31:25], instr[11:7]};
             2'b10: imm_extend = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0};
+            2'b11: imm_extend = {{12{instr[31]}}, instr[19:12], instr[20], instr[30:21], 1'b0};
         endcase
             
     end
@@ -126,10 +103,11 @@ module riscv_datapath(input logic clk, input logic a_rstn);
 
     // Mux to select register output from alu or memory
     always_comb begin
-        if(result_src)
-            r_input_write = data_mem_output;
-        else
-            r_input_write = alu_output;
+        case(result_src)
+            2'b00: r_input_write = alu_output;
+            2'b01: r_input_write = data_mem_output;
+            2'b10: r_input_write = pc_plus_4;
+        endcase
     end
 
     // Data memory

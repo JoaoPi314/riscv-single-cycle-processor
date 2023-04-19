@@ -4,7 +4,7 @@ module riscv_control(
     input logic [2:0] funct3,
     input logic funct7,
     output logic pc_src,
-    output logic result_src,
+    output logic [1:0]result_src,
     output logic mem_write,
     output logic alu_src,
     output logic [1:0] imm_src,
@@ -14,47 +14,72 @@ module riscv_control(
 
     logic [1:0] alu_op;
     logic branch;
+    logic jump;
 
-    assign pc_src = branch & zero;
+    assign pc_src = (branch & zero)|jump;
 
     // Main decoder
     always_comb begin
         case(op)
             7'b0000_011: begin
-                result_src = 1'b1;
+                result_src = 2'b01;
                 mem_write = 1'b0;
                 alu_src = 1'b1;
                 imm_src = 2'b00;
                 reg_write = 1'b1;
                 alu_op = 2'b00;
                 branch = 1'b0;
+                jump = 1'b0;
             end
             7'b0100_011: begin
-                result_src = 1'b0;
+                result_src = 2'b00;
                 mem_write = 1'b1;
                 alu_src = 1'b1;
                 imm_src = 2'b01;
                 reg_write = 1'b0;
                 alu_op = 2'b00;
                 branch = 1'b0;
+                jump = 1'b0;
             end
             7'b0110_011: begin
-                result_src = 1'b0;
+                result_src = 2'b00;
                 mem_write = 1'b0;
                 alu_src = 1'b0;
                 imm_src = 2'b01;
                 reg_write = 1'b1;
                 alu_op = 2'b10;
                 branch = 1'b0;
+                jump = 1'b0;
             end
             7'b1100_011: begin
-                result_src = 1'b0;
+                result_src = 2'b00;
                 mem_write = 1'b0;
                 alu_src = 1'b0;
                 imm_src = 2'b10;
                 reg_write = 1'b0;
                 alu_op = 2'b01;
                 branch = 1'b1;
+                jump = 1'b0;
+            end
+            7'b0010_011: begin
+                result_src = 2'b00;
+                mem_write = 1'b0;
+                alu_src = 1'b1;
+                imm_src = 2'b00;
+                reg_write = 1'b1;
+                alu_op = 2'b10;
+                branch = 1'b0;
+                jump = 1'b0;
+            end
+            7'b1101_111: begin
+                result_src = 2'b10;
+                mem_write = 1'b0;
+                alu_src = 1'b0;
+                imm_src = 2'b11;
+                reg_write = 1'b1;
+                alu_op = 2'b00;
+                branch = 1'b0;
+                jump = 1'b1;
             end
         endcase
     end
