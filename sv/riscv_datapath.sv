@@ -1,6 +1,19 @@
-module riscv_datapath(input logic clk, input logic a_rstn);
+module riscv_datapath(
+    input logic clk, 
+    input logic a_rstn,
+    input logic [2:0] alu_control,
+    input logic alu_src,
+    input logic reg_write,
+    input logic [1:0] imm_src,
+    input logic mem_write,
+    input logic [2:0] result_src,
+    input logic pc_src,
+    output logic zero,
+    output logic [6:0] op,
+    output logic [2:0]funct3,
+    output logic funct7
+);
 
-    
     logic [31:0] pc;
     logic [31:0] next_pc;
 
@@ -16,31 +29,12 @@ module riscv_datapath(input logic clk, input logic a_rstn);
     logic [31:0] pc_target;
     logic [31:0] pc_plus_4;
 
-    // Controls
-    logic [2:0] alu_control;
-    logic       alu_src;
-    logic       reg_write;
-    logic [1:0] imm_src;
-    logic       mem_write;
-    logic       result_src;
-    logic       pc_src;
-    logic       zero;
-
-
-    // Control
-    riscv_control control(
-        .zero(zero),
-        .op(instr[6:0]),
-        .funct3(instr[14:12]),
-        .funct7(instr[30]),
-        .pc_src(pc_src),
-        .result_src(result_src),
-        .mem_write(mem_write),
-        .alu_src(alu_src),
-        .imm_src(imm_src),
-        .reg_write(reg_write),
-        .alu_control(alu_control)
-    );
+    // Assign output to control unit
+    always_comb begin
+        op = instr[6:0];
+        funct3 = instr[14:12];
+        funct7 = instr[30];
+    end
 
     // Update PC register
     riscv_update_pc update_pc(

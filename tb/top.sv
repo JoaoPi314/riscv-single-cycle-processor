@@ -5,7 +5,7 @@ module top;
     logic clk;
     logic a_rstn;
 
-    riscv_datapath datapath(
+    riscv_cpu cpu(
         .clk(clk),
         .a_rstn(a_rstn)
     );
